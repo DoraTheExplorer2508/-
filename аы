@@ -1,0 +1,110 @@
+#include <iostream>
+#include <ctime>
+#include <iomanip>
+using namespace std;
+
+int** alloc_memory(int n, int m) {
+    int** a = new int* [n];
+    for (int i = 0; i < n; i++)
+        a[i] = new int[m];
+    return a;
+}
+
+void free_memory(int** a, int n) {
+    for (int i = 0; i < n; i++)
+        delete[] a[i];
+    delete[] a;
+}
+
+void fill_matrix(int** a, int n, int m) {
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < m; j++)
+        {
+            a[i][j] = 0;
+        }
+    }
+}
+
+void print_matrix(int** a, int n, int m) {
+
+    cout << left;
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < m; j++)
+        {
+            cout << setw(8) << a[i][j];
+        }
+        cout << endl;
+    }
+    cout << endl;
+}
+
+void change_el(int** a, int n, int m, int& i, int& j) {
+    i = rand() % n;
+    j = rand() % m;
+    a[i][j] = 1;
+}
+
+bool gameanswer(int** a, int a1, int a2) {
+    bool res = false;
+    if (a[a1 - 1][a2 - 1] != 0) {
+        res = true;
+    }
+    return res;
+}
+
+
+int main()
+{
+    setlocale(LC_ALL, "rus");
+
+    srand(time(0));
+
+    int n, m;
+    cout << "Введите количество строк = ";
+    cin >> n;
+
+    cout << "Введите количество столбцов = ";
+    cin >> m;
+
+    int** a = alloc_memory(n, m);
+    fill_matrix(a, n, m);
+
+    int i, j;
+    change_el(a, n, m, i, j);
+    print_matrix(a, n, m);
+
+    for (int count = 0; count < 5; count++) {
+        int a1, a2;
+        cin >> a1;
+        cin >> a2;
+
+        if (a1 > n || a2 > m || a1 < 1 || a2 < 1) {
+            cout << "Введите другой вариант\n";
+            count--;
+        }
+
+        else if (a[a1-1][a2-1] == 2){
+            cout << "Уже ходили\n";
+            count--;
+        }
+      
+        else if (gameanswer(a, a1, a2) == true) {
+            cout << "Победа\n";
+            break;
+        }
+        else {
+            cout << "Неверный ответ" << "\n";
+            a[a1 - 1][a2 - 1] = 2;
+
+            if (count == 4 && gameanswer(a, a1, a2) != true) {
+                cout << "Game over\n";
+            }
+        }
+    }
+    cout << "\n" << "Верный ответ: " << i + 1 << " " << j + 1;
+
+    free_memory(a, n);
+  
+}
